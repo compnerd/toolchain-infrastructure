@@ -2,8 +2,20 @@
 
 function main() {
   local multiple_master_repositories=( llvm clang lldb )
+  local single_master_repositories=( clang-tools-extra lld cmark swift swift-corelibs-foundation swift-corelibs-libdispatch swift-corelibs-xctest swift-llbuild swift-package-manager swift-syntax )
+  local runtime_repositories=( compiler-rt libunwind libcxxabi libcxx openmp )
+  local toolchain_source=$(realpath -q $(dirname $(readlink -f ${0}))/../..)
+
+  for repo in ${multiple_master_repositories[@]} ${single_master_repositories[@]} ; do
+    local GIT_DIR=${toolchain_source}/${repo}
+    if ! git -C ${GIT_DIR} diff --no-ext-diff --quiet --exit-code ; then
+      echo "${repo} is dirty, aborting rebase"
+      exit -1
+    fi
+  done
+
   for repo in ${multiple_master_repositories[@]} ; do
-    local GIT_DIR=$(realpath -q $(dirname $(readlink -f ${0}))/../..)/${repo}
+    local GIT_DIR=${toolchain_source}/${repo}
 
     git -C ${GIT_DIR} fetch -q upstream
     git -C ${GIT_DIR} fetch -q swift
@@ -24,9 +36,8 @@ function main() {
     fi
   done
 
-  local single_master_repositories=( clang-tools-extra lld cmark swift swift-corelibs-foundation swift-corelibs-libdispatch swift-corelibs-xctest swift-llbuild swift-package-manager swift-syntax ) # compiler-rt libunwind libcxxabi libcxx openmp 
   for repo in ${single_master_repositories[@]} ; do
-    local GIT_DIR=$(realpath -q $(dirname $(readlink -f ${0}))/../..)/${repo}
+    local GIT_DIR=${toolchain_source}/${repo}
     git -C ${GIT_DIR} fetch -q upstream
     git -C ${GIT_DIR} rebase --no-stat upstream/master || exit 253
   done
