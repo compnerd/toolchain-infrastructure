@@ -95,8 +95,6 @@ $(BuildDir)/toolchain/build.ninja:
 	cd $(BuildDir)/toolchain
 	$(CMake) $(CMakeFlags)                                                 \
 	  -DLLVM_ENABLE_ASSERTIONS=$(AssertsEnabled)                           \
-	  -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb;cmark;swift"\
-	  -DLLVM_EXTERNAL_PROJECTS="cmark;swift"                               \
 	  -DSWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/swift-corelibs-libdispatch \
 	  -C $(CMakeCaches)/toolchain-common.cmake                             \
 	  -C $(CMakeCaches)/toolchain.cmake                                    \

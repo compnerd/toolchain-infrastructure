@@ -1,4 +1,20 @@
 
+# --- global ---
+
+set(LLVM_ENABLE_PROJECTS
+      clang
+      clang-tools-extra
+      lld
+      lldb
+      cmark
+      swift
+    CACHE STRING "")
+
+set(LLVM_EXTERNAL_PROJECTS
+      cmark
+      swift
+    CACHE STRING "")
+
 # --- LLVM ---
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
