@@ -177,7 +177,7 @@ set(LLDB_USE_SYSTEM_SIX YES CACHE BOOL "")
 
 # NOTE(compnerd) build with the lld linker rather than the gold linker.
 set(SWIFT_ENABLE_GOLD_LINKER NO CACHE BOOL "")
-set(SWIFT_ENABLE_LLD_LINKER YES CACEH BOOL "")
+set(SWIFT_ENABLE_LLD_LINKER YES CACHE BOOL "")
 
 # NOTE(compnerd) build the swift tools to populate them into the toolchain.
 set(SWIFT_INCLUDE_TOOLS YES CACHE BOOL "")
