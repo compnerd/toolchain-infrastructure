@@ -8,7 +8,8 @@ function main() {
 
   for repo in ${multiple_master_repositories[@]} ${single_master_repositories[@]} ; do
     local GIT_DIR=${toolchain_source}/${repo}
-    if ! git -C ${GIT_DIR} diff --no-ext-diff --quiet --exit-code ; then
+    if ! git -C ${GIT_DIR} diff --no-ext-diff --quiet ||
+       ! git -C ${GIT_DIR} diff --no-ext-diff --quiet --cached ; then
       echo "${repo} is dirty, aborting rebase"
       exit -1
     fi
