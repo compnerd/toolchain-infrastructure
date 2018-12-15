@@ -22,13 +22,13 @@ ifeq ($(BuildType),Debug)
   AssertsEnabled := YES
   AssertsVariant := Asserts
   InstallVariant :=
-endif
-
-ifeq ($(BuildType),Release)
+else ifeq ($(BuildType),Release)
   CMakeBuildType := RelWithDebInfo
   AssertsEnabled := YES
   AssertsVariant := Asserts
   InstallVariant := -stripped
+else
+  $(error BuildType should be either Debug or Release)
 endif
 
 SourceDir := $(abspath $(dir $(realpath $(lastword $(MAKEFILE_LIST))))/..)
