@@ -1,6 +1,5 @@
 
 # --- global ---
-
 set(LLVM_ENABLE_PROJECTS
       clang
       clang-tools-extra
@@ -153,12 +152,6 @@ set(LLD_USE_VTUNE NO CACHE BOOL "")
 # available on all the targets and is reproducible.
 set(LLDB_DISABLE_LIBEDIT YES CACHE BOOL "")
 
-if(CMAKE_HOST_SYSTEM_NAME STREQUAL Darwin)
-  set(LLDB_BUILD_FRAMEWORK YES CACHE BOOL "")
-else()
-  set(LLDB_BUILD_FRAMEWORK NO CACHE BOOL "")
-endif()
-
 # TODO(compnerd) setup the toolchain to ensure that the python and swig that we
 # use is available on all the targets and is reproducible.
 set(LLDB_DISABLE_PYTHON YES CACHE BOOL "")
@@ -190,6 +183,15 @@ set(SWIFT_INCLUDE_DOCS NO CACHE BOOL "")
 # will be built separately.
 set(SWIFT_BUILD_DYNAMIC_STDLIB NO CACHE BOOL "")
 set(SWIFT_BUILD_STATIC_STDLIB NO CACHE BOOL "")
+
+# NOTE(lanza) the lldb framework requires the clang headers that do not get
+# installed unless the stdlib is build
+if(SWIFT_BUILD_DYNAMIC_STDLIB OR SWIFT_BUILD_STATIC_STDLIB AND
+    CMAKE_HOST_SYSTEM_NAME STREQUAL Darwin)
+  set(LLDB_BUILD_FRAMEWORK YES CACHE BOOL "")
+else()
+  set(LLDB_BUILD_FRAMEWORK NO CACHE BOOL "")
+endif()
 
 # NOTE(compnerd) disable the SDK overlay, this is part of the target which will
 # be built separately.

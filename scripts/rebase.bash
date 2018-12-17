@@ -4,7 +4,12 @@ function main() {
   local multiple_master_repositories=( llvm clang lldb )
   local single_master_repositories=( clang-tools-extra lld cmark swift swift-corelibs-foundation swift-corelibs-libdispatch swift-corelibs-xctest swift-llbuild swift-package-manager swift-syntax )
   local runtime_repositories=( compiler-rt libunwind libcxxabi libcxx openmp )
-  local toolchain_source=$(realpath -q $(dirname $(readlink -f ${0}))/../..)
+  if [[ $(uname -a) =~ Darwin ]]; then
+    rl=greadlink
+  else
+    rl=readlink
+  fi
+  local toolchain_source=$(realpath -q $(dirname $($rl -f ${0}))/../..)
 
   for repo in ${multiple_master_repositories[@]} ${single_master_repositories[@]} ; do
     local GIT_DIR=${toolchain_source}/${repo}
