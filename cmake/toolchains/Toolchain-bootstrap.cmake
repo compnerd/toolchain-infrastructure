@@ -26,16 +26,21 @@ set(CMAKE_SWIFT_COMPILER ${toolchain}/usr/bin/swiftc CACHE FILEPATH "")
 set(CMAKE_AR ${toolchain}/usr/bin/llvm-ar CACHE FILEPATH "")
 set(CMAKE_RANLIB ${toolchain}/usr/bin/llvm-ranlib CACHE FILEPATH "")
 
+function(verify_windows_VCVAR var)
+  if (NOT DEFINED "${var}" AND NOT DEFINED "ENV{${var}}")
+    message(FATAL_ERROR "${var} environment variable must be set")
+  endif()
+endfunction()
+
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-  if(NOT $ENV{VCToolsInstallDir})
-    set(ENV{VCToolsInstallDir} ${TOOLCHAIN_SOURCE_DIR}/WinSDK/MSVC/14.15.26726)
-  endif()
-  if(NOT $ENV{UniversalCRTSdkDir})
-    set(ENV{UniversalCRTSdkDir} ${TOOLCHAIN_SOURCE_DIR}/WinSDK/SDK)
-  endif()
-  if(NOT $ENV{UCRTVersion})
-    set(ENV{UCRTVersion} 10.0.17134.0)
-  endif()
+
+  verify_windows_VCVAR(VCToolsInstallDir)
+  verify_windows_VCVAR(UniversalCRTSdkDir)
+  verify_windows_VCVAR(UCRTVersion)
+
+  set(VCToolsInstallDir $ENV{VCToolsInstallDir} CACHE STRING "")
+  set(UniversalCRTSdkDir $ENV{UniversalCRTSdkDir} CACHE STRING "")
+  set(UCRTVersion $ENV{UCRTVersion} CACHE STRING "")
 
   include(WindowsSDK)
 
