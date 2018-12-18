@@ -1,3 +1,7 @@
+need := 3.82
+ifneq ($(need), $(firstword $(sort $(MAKE_VERSION) $(need))))
+  $(error You need at least make version >= $(need))
+endif
 
 BuildOS := $(shell uname -s)
 BuildArch := $(shell uname -m)
