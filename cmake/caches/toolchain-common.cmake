@@ -180,7 +180,7 @@ set(SWIFT_ENABLE_GOLD_LINKER NO CACHE BOOL "")
 set(SWIFT_ENABLE_LLD_LINKER YES CACHE BOOL "")
 
 # NOTE(compnerd) build the swift tools to populate them into the toolchain.
-set(SWIFT_INCLUDE_TOOLS YES CACHE BOOL "")
+set(SWIFT_BUILD_TOOLS YES CACHE BOOL "")
 
 # NOTE(compnerd) disable building the documentation as we do not wish to push
 # tht into the toolchain.
