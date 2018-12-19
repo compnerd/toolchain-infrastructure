@@ -72,10 +72,10 @@ set(LLVM_DISTRIBUTION_COMPONENTS
       libclang-python-bindings
       liblldb
       #libtapi
-      ##sourcekit-inproc
-      swift-migrator-data
-      swift-headers
-      swift-clang-resource-dir-symlink
+      #sourcekit-inproc
+      #swift-migrator-data
+      #swift-headers
+      #swift-clang-resource-dir-symlink
       #tapi-headers
       ${LLVM_TOOLCHAIN_TOOLS}
       ${CLANG_TOOLS}
