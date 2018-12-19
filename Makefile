@@ -95,7 +95,7 @@ ifeq ($(BOOTSTRAP),)
 $(BuildDir)/toolchain/build.ninja: bootstrap-toolchain
 endif
 $(BuildDir)/toolchain/build.ninja:
-	mkdir -p $(BuildDir)/toolchain
+	$(CMake) -E make_directory $(BuildDir)/toolchain
 	cd $(BuildDir)/toolchain
 	$(CMake) $(CMakeFlags)                                                 \
 	  -DLLVM_ENABLE_ASSERTIONS=$(AssertsEnabled)                           \
@@ -114,7 +114,7 @@ swift-stdlib-$(1):
 
 .ONESHELL: $$(SourceDir)/build/$$(BuildType)/swift-stdlib-$(1)/build.ninja
 $$(SourceDir)/build/$$(BuildType)/swift-stdlib-$(1)/build.ninja:
-	mkdir -p $$(SourceDir)/build/$$(BuildType)/swift-stdlib-$(1)
+	$(CMake) -E make_directory $$(SourceDir)/build/$$(BuildType)/swift-stdlib-$(1)
 	cd $$(SourceDir)/build/$$(BuildType)/swift-stdlib-$(1)
 	$$(CMake) $$(CMakeFlags)                                               \
 	  -C $$(CMakeCaches)/swift-stdlib-common.cmake                         \
@@ -133,7 +133,7 @@ swift-corelibs-libdispatch: $(BuildDir)/swift-corelibs-libdispatch/build.ninja
 .ONESHELL: $(BuildDir)/swift-corelibs-libdispatch/build.ninja
 $(BuildDir)/swift-corelibs-libdispatch/build.ninja: bootstrap-toolchain bootstrap-target-swift
 $(BuildDir)/swift-corelibs-libdispatch/build.ninja:
-	mkdir -p $(BuildDir)/swift-corelibs-libdispatch
+	$(CMake) -E make_directory $(BuildDir)/swift-corelibs-libdispatch
 	cd $(BuildDir)/swift-corelibs-libdispatch
 	$(CMake) $(CMakeFlags)                                                 \
 	  -C $(CMakeCaches)/swift-corelibs-libdispatch-$(Host).cmake           \
@@ -151,7 +151,7 @@ swift-corelibs-foundation:
 $(BuildDir)/swift-corelibs-foundation/build.ninja: bootstrap-toolchain
 $(BuildDir)/swift-corelibs-foundation/build.ninja: swift-corelibs-libdispatch
 $(BuildDir)/swift-corelibs-foundation/build.ninja:
-	mkdir -p $(BuildDir)/swift-corelibs-foundation
+	$(CMake) -E make_directory $(BuildDir)/swift-corelibs-foundation
 	cd $(BuildDir)/swift-corelibs-foundation
 	$(CMake) $(CMakeFlags)                                                 \
 	  -C $(CMakeCaches)/swift-corelibs-foundation-$(Host).cmake            \
