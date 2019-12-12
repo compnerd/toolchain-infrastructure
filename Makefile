@@ -99,11 +99,11 @@ $(BuildDir)/toolchain/build.ninja:
 	cd $(BuildDir)/toolchain
 	$(CMake) $(CMakeFlags)                                                 \
 	  -DLLVM_ENABLE_ASSERTIONS=$(AssertsEnabled)                           \
-	  -DSWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/swift-corelibs-libdispatch \
+	  -DSWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/toolchain/swift-corelibs-libdispatch \
 	  -C $(CMakeCaches)/toolchain-common.cmake                             \
 	  -C $(CMakeCaches)/toolchain.cmake                                    \
 	  -C $(CMakeCaches)/toolchain-$(Host).cmake                            \
-	$(SourceDir)/llvm
+	$(SourceDir)/toolchain/llvm
 
 # --- swift-stdlib ---
 define build-swift-stdlib
