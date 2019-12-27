@@ -40,7 +40,6 @@ BuildDir := $(SourceDir)/build/$(BuildType)/$(Host)
 
 CMakeCaches := $(SourceDir)/infrastructure/cmake/caches
 CMakeScripts := $(SourceDir)/infrastructure/cmake/scripts
-CMakeToolchains := $(SourceDir)/infrastructure/cmake/toolchains
 
 CMake := $(shell which cmake)
 Ninja := $(shell which ninja)
@@ -52,16 +51,7 @@ CMakeFlags := -G Ninja                                                         \
 
 # inform the build where the source tree resides
 CMakeFlags += -DTOOLCHAIN_SOURCE_DIR=$(SourceDir)
-
-ifeq ($(BOOTSTRAP),)
-  CMakeFlags += -DCMAKE_TOOLCHAIN_FILE=$(CMakeToolchains)/Toolchain-bootstrap.cmake
-ifneq ($(MAKECMDGOALS),bootstrap-target-swift)
-  CMakeFlags += -DCMAKE_SYSTEM_NAME=$(HostOS) -DCMAKE_SYSTEM_PROCESSOR=$(HostArch)
-endif
-else
-  CMakeFlags += -DCMAKE_TOOLCHAIN_FILE=$(CMakeToolchains)/Toolchain-$(Host).cmake
-  CMakeFlags += -DCMAKE_SYSTEM_NAME=$(HostOS) -DCMAKE_SYSTEM_PROCESSOR=$(HostArch)
-endif
+# CMakeFlags += -DCMAKE_SYSTEM_NAME=$(HostOS) -DCMAKE_SYSTEM_PROCESSOR=$(HostArch)
 
 Vendor := unknown
 Version := Default
@@ -72,17 +62,33 @@ SwiftStandardLibraryTarget := swift-stdlib-$(shell echo $(HostOS) | tr '[A-Z]' '
 
 DESTDIR := $(or $(DESTDIR),$(SourceDir)/prebuilt/$(Host)/Developer/Toolchains/$(XCToolchain)/usr)
 
-# --- bootstrap ---
-.PHONY: bootstrap-toolchain
-bootstrap-toolchain: BootstrapToolchain := $(SourceDir)/build/Release/$(Build)/Developer/Toolchains/$(BootstrapXCToolchain)
-bootstrap-toolchain:
-	$(MAKE) BOOTSTRAP=1 DESTDIR=$(BootstrapToolchain)/usr BuildType=Release Host=$(Build) toolchain
+# --- toolchain-tools ---
+.ONESHELL: $(BuildDir)/toolchain-tools/build.ninja
+$(BuildDir)/toolchain-tools/build.ninja:
+	$(CMake) $(CMakeFlags)                                                 \
+	  -B $(BuildDir)/toolchain-tools                                       \
+	  -D CMAKE_BUILD_TYPE=Release                                          \
+	  -D LLDB_DISABLE_PYTHON=YES                                           \
+	  -D LLVM_USE_HOST_TOOLS=NO                                            \
+	  -D LLVM_ENABLE_ASSERTIONS=NO                                         \
+	  -D LLVM_ENABLE_PROJECTS="clang;lldb"                                 \
+	  -S $(SourceDir)/toolchain/llvm
 
-.PHONY: bootstrap-target-swift
-bootstrap-target-swift: bootstrap-toolchain
-bootstrap-target-swift: BootstrapToolchain := $(SourceDir)/build/Release/$(Build)/Developer/Toolchains/$(BootstrapXCToolchain)
-bootstrap-target-swift:
-	$(MAKE) DESTDIR=$(BootstrapToolchain)/usr BuildType=$(BuildType) $(SwiftStandardLibraryTarget)
+$(BuildDir)/toolchain-tools/bin/llvm-tblgen: $(BuildDir)/toolchain-tools/build.ninja
+$(BuildDir)/toolchain-tools/bin/llvm-tblgen:
+	$(Ninja) -C $(BuildDir)/toolchain-tools llvm-tblgen
+
+$(BuildDir)/toolchain-tools/bin/clang-tblgen: $(BuildDir)/toolchain-tools/build.ninja
+$(BuildDir)/toolchain-tools/bin/clang-tblgen:
+	$(Ninja) -C $(BuildDir)/toolchain-tools clang-tblgen
+
+$(BuildDir)/toolchain-tools/bin/lldb-tblgen: $(BuildDir)/toolchain-tools/build.ninja
+$(BuildDir)/toolchain-tools/bin/lldb-tblgen:
+	$(Ninja) -C $(BuildDir)/toolchain-tools lldb-tblgen
+
+toolchain-tools: $(BuildDir)/toolchain-tools/bin/llvm-tblgen
+toolchain-tools: $(BuildDir)/toolchain-tools/bin/clang-tblgen
+toolchain-tools: $(BuildDir)/toolchain-tools/bin/lldb-tblgen
 
 # --- toolchain ---
 .PHONY: toolchain
@@ -91,14 +97,16 @@ toolchain:
 	DESTDIR=$(DESTDIR) $(Ninja) -C $(BuildDir)/toolchain install-distribution$(InstallVariant)
 
 .ONESHELL: $(BuildDir)/toolchain/build.ninja
-ifeq ($(BOOTSTRAP),)
-$(BuildDir)/toolchain/build.ninja: bootstrap-toolchain
-endif
+$(BuildDir)/toolchain/build.ninja: toolchain-tools
 $(BuildDir)/toolchain/build.ninja:
 	mkdir -p $(BuildDir)/toolchain
 	cd $(BuildDir)/toolchain
 	$(CMake) $(CMakeFlags)                                                 \
 	  -DLLVM_ENABLE_ASSERTIONS=$(AssertsEnabled)                           \
+	  -DLLVM_USE_HOST_TOOLS=NO                                             \
+	  -DLLVM_TABLEGEN=$(BuildDir)/toolchain-tools/bin/llvm-tblgen          \
+	  -DCLANG_TABLEGEN=$(BuildDir)/toolchain-tools/bin/clang-tblgen        \
+	  -DLLDB_TABLEGEN=$(BuildDir)/toolchain-tools/bin/lldb-tblgen          \
 	  -DSWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/toolchain/swift-corelibs-libdispatch \
 	  -C $(CMakeCaches)/toolchain-common.cmake                             \
 	  -C $(CMakeCaches)/toolchain.cmake                                    \
