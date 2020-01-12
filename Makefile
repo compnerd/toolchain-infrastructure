@@ -107,7 +107,7 @@ $(BuildDir)/toolchain/build.ninja:
 	  -DLLVM_TABLEGEN=$(BuildDir)/toolchain-tools/bin/llvm-tblgen          \
 	  -DCLANG_TABLEGEN=$(BuildDir)/toolchain-tools/bin/clang-tblgen        \
 	  -DLLDB_TABLEGEN=$(BuildDir)/toolchain-tools/bin/lldb-tblgen          \
-	  -DSWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/toolchain/swift-corelibs-libdispatch \
+	  -DSWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/swift-corelibs-libdispatch \
 	  -C $(CMakeCaches)/toolchain-common.cmake                             \
 	  -C $(CMakeCaches)/toolchain.cmake                                    \
 	  -C $(CMakeCaches)/toolchain-$(Host).cmake                            \
