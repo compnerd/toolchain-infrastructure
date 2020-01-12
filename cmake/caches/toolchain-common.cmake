@@ -173,6 +173,10 @@ set(LLDB_RELOCATABLE_PYTHON YES CACHE BOOL "")
 # NOTE(compnerd) do not provide a new six.py package in the toolchain
 set(LLDB_USE_SYSTEM_SIX YES CACHE BOOL "")
 
+# NOTE(compnerd) use the pre-generated swig bindings rather than building it
+set(LLDB_ALLOW_STATIC_BINDINGS YES CACHE BOOL "")
+set(LLDB_USE_STATIC_BINDINGS YES CACHE BOOL "")
+
 # --- swift ---
 
 # NOTE(compnerd) build with the lld linker rather than the gold linker.
