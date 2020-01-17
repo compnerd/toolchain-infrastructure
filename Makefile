@@ -63,11 +63,12 @@ SwiftStandardLibraryTarget := swift-stdlib-$(shell echo $(HostOS) | tr '[A-Z]' '
 DESTDIR := $(or $(DESTDIR),$(SourceDir)/prebuilt/$(Host)/Developer/Toolchains/$(XCToolchain)/usr)
 
 # --- toolchain-tools ---
-.ONESHELL: $(BuildDir)/toolchain-tools/build.ninja
 $(BuildDir)/toolchain-tools/build.ninja:
-	$(CMake) $(CMakeFlags)                                                 \
+	$(CMake)                                                               \
+	  -G Ninja                                                             \
 	  -B $(BuildDir)/toolchain-tools                                       \
 	  -D CMAKE_BUILD_TYPE=Release                                          \
+	  -D CMAKE_MAKE_PROGRAM=$(Ninja)                                       \
 	  -D LLDB_DISABLE_PYTHON=YES                                           \
 	  -D LLVM_USE_HOST_TOOLS=NO                                            \
 	  -D LLVM_ENABLE_ASSERTIONS=NO                                         \
