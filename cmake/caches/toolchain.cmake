@@ -59,6 +59,7 @@ set(LLDB_TOOLS
       lldb-argdumper
       lldb-server
       lldb-vscode
+      repl_swift
     CACHE STRING "")
 
 set(SWIFT_INSTALL_COMPONENTS
