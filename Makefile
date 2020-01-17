@@ -57,7 +57,6 @@ Vendor := unknown
 Version := Default
 
 XCToolchain = $(Vendor)-$(AssertsVariant)-$(Version).xctoolchain
-BootstrapXCToolchain = unknown-Asserts-bootstrap.xctoolchain
 SwiftStandardLibraryTarget := swift-stdlib-$(shell echo $(HostOS) | tr '[A-Z]' '[a-z]')
 
 DESTDIR := $(or $(DESTDIR),$(SourceDir)/prebuilt/$(Host)/Developer/Toolchains/$(XCToolchain)/usr)
