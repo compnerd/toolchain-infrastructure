@@ -87,17 +87,15 @@ $(BuildDir)/toolchain-tools/bin/lldb-tblgen: $(BuildDir)/toolchain-tools/build.n
 $(BuildDir)/toolchain-tools/bin/lldb-tblgen:
 	$(Ninja) -C $(BuildDir)/toolchain-tools lldb-tblgen
 
-toolchain-tools: $(BuildDir)/toolchain-tools/bin/llvm-tblgen
-toolchain-tools: $(BuildDir)/toolchain-tools/bin/clang-tblgen
-toolchain-tools: $(BuildDir)/toolchain-tools/bin/lldb-tblgen
-
 # --- toolchain ---
 .PHONY: toolchain
 toolchain: $(BuildDir)/toolchain/build.ninja
 toolchain:
 	DESTDIR=$(DESTDIR) $(Ninja) -C $(BuildDir)/toolchain install-distribution$(InstallVariant)
 
-$(BuildDir)/toolchain/build.ninja: toolchain-tools
+$(BuildDir)/toolchain/build.ninja: $(BuildDir)/toolchain-tools/bin/llvm-tblgen
+$(BuildDir)/toolchain/build.ninja: $(BuildDir)/toolchain-tools/bin/clang-tblgen
+$(BuildDir)/toolchain/build.ninja: $(BuildDir)/toolchain-tools/bin/lldb-tblgen
 $(BuildDir)/toolchain/build.ninja:
 	$(CMake) $(CMakeFlags)                                                 \
 	  -B $(BuildDir)/toolchain                                             \
