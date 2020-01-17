@@ -35,8 +35,8 @@ else
   $(error BuildType should be either Debug or Release)
 endif
 
-SourceDir := $(abspath $(dir $(realpath $(lastword $(MAKEFILE_LIST))))/..)
-BuildDir := $(SourceDir)/build/$(BuildType)/$(Host)
+SourceDir := $(abspath $(dir $(realpath $(lastword $(MAKEFILE_LIST))))..)
+BuildDir := $(dir $(SourceDir))BinaryCache/$(Host)/$(BuildType)
 
 CMakeCaches := $(SourceDir)/infrastructure/cmake/caches
 CMakeScripts := $(SourceDir)/infrastructure/cmake/scripts
@@ -59,13 +59,13 @@ Version := Default
 XCToolchain = $(Vendor)-$(AssertsVariant)-$(Version).xctoolchain
 SwiftStandardLibraryTarget := swift-stdlib-$(shell echo $(HostOS) | tr '[A-Z]' '[a-z]')
 
-DESTDIR := $(or $(DESTDIR),$(SourceDir)/prebuilt/$(Host)/Developer/Toolchains/$(XCToolchain)/usr)
+DESTDIR := $(or $(DESTDIR),$(dir $(SourceDir))BinaryCache/Library/Developer/Toolchains/$(XCToolchain)/usr)
 
 # --- toolchain-tools ---
-$(BuildDir)/toolchain-tools/build.ninja:
+$(dir $(BuildDir))toolchain-tools/build.ninja:
 	$(CMake)                                                               \
 	  -G Ninja                                                             \
-	  -B $(BuildDir)/toolchain-tools                                       \
+	  -B $(dir $(BuildDir))toolchain-tools                                 \
 	  -D CMAKE_BUILD_TYPE=Release                                          \
 	  -D CMAKE_MAKE_PROGRAM=$(Ninja)                                       \
 	  -D LLDB_DISABLE_PYTHON=YES                                           \
@@ -74,17 +74,17 @@ $(BuildDir)/toolchain-tools/build.ninja:
 	  -D LLVM_ENABLE_PROJECTS="clang;lldb"                                 \
 	  -S $(SourceDir)/llvm-project/llvm
 
-$(BuildDir)/toolchain-tools/bin/llvm-tblgen: $(BuildDir)/toolchain-tools/build.ninja
-$(BuildDir)/toolchain-tools/bin/llvm-tblgen:
-	$(Ninja) -C $(BuildDir)/toolchain-tools llvm-tblgen
+$(dir $(BuildDir))toolchain-tools/bin/llvm-tblgen: $(dir $(BuildDir))toolchain-tools/build.ninja
+$(dir $(BuildDir))toolchain-tools/bin/llvm-tblgen:
+	$(Ninja) -C $(dir $(BuildDir))toolchain-tools llvm-tblgen
 
-$(BuildDir)/toolchain-tools/bin/clang-tblgen: $(BuildDir)/toolchain-tools/build.ninja
-$(BuildDir)/toolchain-tools/bin/clang-tblgen:
-	$(Ninja) -C $(BuildDir)/toolchain-tools clang-tblgen
+$(dir $(BuildDir))toolchain-tools/bin/clang-tblgen: $(dir $(BuildDir))toolchain-tools/build.ninja
+$(dir $(BuildDir))toolchain-tools/bin/clang-tblgen:
+	$(Ninja) -C $(dir $(BuildDir))toolchain-tools clang-tblgen
 
-$(BuildDir)/toolchain-tools/bin/lldb-tblgen: $(BuildDir)/toolchain-tools/build.ninja
-$(BuildDir)/toolchain-tools/bin/lldb-tblgen:
-	$(Ninja) -C $(BuildDir)/toolchain-tools lldb-tblgen
+$(dir $(BuildDir))toolchain-tools/bin/lldb-tblgen: $(dir $(BuildDir))toolchain-tools/build.ninja
+$(dir $(BuildDir))toolchain-tools/bin/lldb-tblgen:
+	$(Ninja) -C $(dir $(BuildDir))toolchain-tools lldb-tblgen
 
 # --- toolchain ---
 .PHONY: toolchain
@@ -92,9 +92,9 @@ toolchain: $(BuildDir)/toolchain/build.ninja
 toolchain:
 	DESTDIR=$(DESTDIR) $(Ninja) -C $(BuildDir)/toolchain install-distribution$(InstallVariant)
 
-$(BuildDir)/toolchain/build.ninja: $(BuildDir)/toolchain-tools/bin/llvm-tblgen
-$(BuildDir)/toolchain/build.ninja: $(BuildDir)/toolchain-tools/bin/clang-tblgen
-$(BuildDir)/toolchain/build.ninja: $(BuildDir)/toolchain-tools/bin/lldb-tblgen
+$(BuildDir)/toolchain/build.ninja: $(dir $(BuildDir))toolchain-tools/bin/llvm-tblgen
+$(BuildDir)/toolchain/build.ninja: $(dir $(BuildDir))toolchain-tools/bin/clang-tblgen
+$(BuildDir)/toolchain/build.ninja: $(dir $(BuildDir))toolchain-tools/bin/lldb-tblgen
 $(BuildDir)/toolchain/build.ninja:
 	$(CMake) $(CMakeFlags)                                                 \
 	  -B $(BuildDir)/toolchain                                             \
@@ -103,9 +103,9 @@ $(BuildDir)/toolchain/build.ninja:
 	  -C $(CMakeCaches)/toolchain-$(Host).cmake                            \
 	  -D LLVM_ENABLE_ASSERTIONS=$(AssertsEnabled)                          \
 	  -D LLVM_USE_HOST_TOOLS=NO                                            \
-	  -D LLVM_TABLEGEN=$(BuildDir)/toolchain-tools/bin/llvm-tblgen         \
-	  -D CLANG_TABLEGEN=$(BuildDir)/toolchain-tools/bin/clang-tblgen       \
-	  -D LLDB_TABLEGEN=$(BuildDir)/toolchain-tools/bin/lldb-tblgen         \
+	  -D LLVM_TABLEGEN=$(dir $(BuildDir))toolchain-tools/bin/llvm-tblgen   \
+	  -D CLANG_TABLEGEN=$(dir $(BuildDir))toolchain-tools/bin/clang-tblgen \
+	  -D LLDB_TABLEGEN=$(dir $(BuildDir))toolchain-tools/bin/lldb-tblgen   \
 	  -D SWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/swift-corelibs-libdispatch \
 	  -S $(SourceDir)/llvm-project/llvm
 
