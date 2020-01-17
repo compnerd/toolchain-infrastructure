@@ -96,22 +96,20 @@ toolchain: $(BuildDir)/toolchain/build.ninja
 toolchain:
 	DESTDIR=$(DESTDIR) $(Ninja) -C $(BuildDir)/toolchain install-distribution$(InstallVariant)
 
-.ONESHELL: $(BuildDir)/toolchain/build.ninja
 $(BuildDir)/toolchain/build.ninja: toolchain-tools
 $(BuildDir)/toolchain/build.ninja:
-	mkdir -p $(BuildDir)/toolchain
-	cd $(BuildDir)/toolchain
 	$(CMake) $(CMakeFlags)                                                 \
-	  -DLLVM_ENABLE_ASSERTIONS=$(AssertsEnabled)                           \
-	  -DLLVM_USE_HOST_TOOLS=NO                                             \
-	  -DLLVM_TABLEGEN=$(BuildDir)/toolchain-tools/bin/llvm-tblgen          \
-	  -DCLANG_TABLEGEN=$(BuildDir)/toolchain-tools/bin/clang-tblgen        \
-	  -DLLDB_TABLEGEN=$(BuildDir)/toolchain-tools/bin/lldb-tblgen          \
-	  -DSWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/swift-corelibs-libdispatch \
+	  -B $(BuildDir)/toolchain                                             \
 	  -C $(CMakeCaches)/toolchain-common.cmake                             \
 	  -C $(CMakeCaches)/toolchain.cmake                                    \
 	  -C $(CMakeCaches)/toolchain-$(Host).cmake                            \
-	$(SourceDir)/toolchain/llvm
+	  -D LLVM_ENABLE_ASSERTIONS=$(AssertsEnabled)                          \
+	  -D LLVM_USE_HOST_TOOLS=NO                                            \
+	  -D LLVM_TABLEGEN=$(BuildDir)/toolchain-tools/bin/llvm-tblgen         \
+	  -D CLANG_TABLEGEN=$(BuildDir)/toolchain-tools/bin/clang-tblgen       \
+	  -D LLDB_TABLEGEN=$(BuildDir)/toolchain-tools/bin/lldb-tblgen         \
+	  -D SWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/swift-corelibs-libdispatch \
+	  -S $(SourceDir)/toolchain/llvm
 
 # --- swift-stdlib ---
 define build-swift-stdlib
