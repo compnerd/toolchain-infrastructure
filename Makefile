@@ -73,7 +73,7 @@ $(BuildDir)/toolchain-tools/build.ninja:
 	  -D LLVM_USE_HOST_TOOLS=NO                                            \
 	  -D LLVM_ENABLE_ASSERTIONS=NO                                         \
 	  -D LLVM_ENABLE_PROJECTS="clang;lldb"                                 \
-	  -S $(SourceDir)/toolchain/llvm
+	  -S $(SourceDir)/llvm-project/llvm
 
 $(BuildDir)/toolchain-tools/bin/llvm-tblgen: $(BuildDir)/toolchain-tools/build.ninja
 $(BuildDir)/toolchain-tools/bin/llvm-tblgen:
@@ -108,7 +108,7 @@ $(BuildDir)/toolchain/build.ninja:
 	  -D CLANG_TABLEGEN=$(BuildDir)/toolchain-tools/bin/clang-tblgen       \
 	  -D LLDB_TABLEGEN=$(BuildDir)/toolchain-tools/bin/lldb-tblgen         \
 	  -D SWIFT_PATH_TO_LIBDISPATCH_SOURCE=$(SourceDir)/swift-corelibs-libdispatch \
-	  -S $(SourceDir)/toolchain/llvm
+	  -S $(SourceDir)/llvm-project/llvm
 
 # --- swift-stdlib ---
 define build-swift-stdlib
