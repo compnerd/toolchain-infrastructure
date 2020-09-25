@@ -42,7 +42,7 @@ set(CLANG_TOOLS
       clangd
       # clangd-indexer
       clang-format
-      clang-headers
+      clang-resource-headers
       # clang-rename
       # clang-reorder-fields
       clang-tidy

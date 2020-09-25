@@ -5,11 +5,6 @@
 set(SWIFT_PRIMARY_VARIANT_SDK WINDOWS CACHE STRING "")
 set(SWIFT_PRIMARY_VARIANT_ARCH x86_64 CACHE STRING "")
 
-# TODO(compnerd) define the SWIFT_HOST_VARIANT_* since the build system is not
-# ready to disable tools
-set(SWIFT_HOST_VARIANT_SDK NONE CACHE STRING "")
-set(SWIFT_HOST_VARIANT_ARCH x86_64 CACHE STRING "")
-
 # TODO(compnerd) specify a single architecture because the build system is not
 # ready for the multi-architecture setup
 set(SWIFT_SDK_WINDOWS_ARCHITECTURES x86_64 CACHE STRING "")

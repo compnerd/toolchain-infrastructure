@@ -71,7 +71,7 @@ set(LLVM_INCLUDE_BENCHMARKS NO CACHE BOOL "")
 
 # TODO(compnerd) setup the toolchain to ensure that the libedit that we use is
 # available on all the targets and is reproducible.
-set(LLVM_ENABLE_LIBEDIT YES CACHE BOOL "")
+set(LLVM_ENABLE_LIBEDIT NO CACHE BOOL "")
 
 # XXX(compnerd) is libpfm useful for our builds?
 set(LLVM_ENABLE_LIBPFM NO CACHE BOOL "")
@@ -174,7 +174,6 @@ set(LLDB_RELOCATABLE_PYTHON YES CACHE BOOL "")
 set(LLDB_USE_SYSTEM_SIX YES CACHE BOOL "")
 
 # NOTE(compnerd) use the pre-generated swig bindings rather than building it
-set(LLDB_ALLOW_STATIC_BINDINGS YES CACHE BOOL "")
 set(LLDB_USE_STATIC_BINDINGS YES CACHE BOOL "")
 
 # --- swift ---
