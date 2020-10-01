@@ -34,7 +34,7 @@ set(LLVM_RUNTIME_TARGETS
 
 set(target x86_64-apple-macosx)
 set(BUILTINS_${target}_CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "")
-set(BUILTINS_${target}_CMAKE_SYSTEM_NAME Darwin CACHE STRING "")
+set(BUILTINS_${target}_CMAKE_SYSTEM_NAME Darwin CACHE STRING "") # LLVMExternalProjectUtils checks this
 set(BUILTINS_${target}_CMAKE_SYSTEM_PROCESSOR arm64 CACHE STRING "")
 set(BUILTINS_${target}_CMAKE_SYSROOT "${TOOLCHAIN_SOURCE_DIR}/external/DarwinSDK/xcode_10.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk" CACHE STRING "")
 set(BUILTINS_${target}_CMAKE_C_FLAGS "" CACHE STRING "")
@@ -338,6 +338,7 @@ set(RUNTIMES_${target}_CMAKE_CXX_FLAGS "" CACHE STRING "")
 set(RUNTIMES_${target}_COMPILER_RT_SANITIZERS_TO_BUILD "asan;cfi;tsan;ubsan_minimal" CACHE STRING "")
 # TODO(t48839194) - isystem for xray needs to be added to not break Fuchsia
 set(RUNTIMES_${target}_COMPILER_RT_BUILD_XRAY OFF CACHE BOOL "")
+set(RUNTIMES_${target}_CMAKE_BUILD_WITH_INSTALL_RPATH ON CACHE STRING "")
 
 
 set(target x86_64-unknown-windows-msvc)
@@ -377,3 +378,4 @@ foreach(target ${LLVM_BUILTIN_TARGETS})
     endif()
   endforeach()
 endforeach()
+
